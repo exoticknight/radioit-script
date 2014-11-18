@@ -40,6 +40,6 @@
 
 ##例子
 
-![t1](1.png)
+![t1](../../raw/master/1.png)
 
-![t2](2.png)
+![t2](../../raw/master/2.png)
