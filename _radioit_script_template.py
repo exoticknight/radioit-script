@@ -32,7 +32,12 @@ def mms_extract(url):
 
 def prettify_table(table, separator=" "):
     max_width = [max(len(x) for x in col) for col in zip(*table)]
-    line_list = [separator.join(u"{0:{width}}".format(x, width=max_width[i]) for i, x in enumerate(line)) for line in table]
+    line_list = [
+        separator.join( \
+            u"{0}".format(x) if i == len(line) - 1 else u"{0:{width}}".format(x, width=max_width[i]) \
+                for i, x in enumerate(line) \
+            ) \
+        for line in table]
     return u"\n".join(line_list)
 
 
