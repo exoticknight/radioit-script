@@ -16,6 +16,7 @@ __debug = False
 def handle_error(e, message):
     print(message)
 
+    global __debug
     if __debug:
         print("-" * 15)
         print(e)
@@ -81,7 +82,7 @@ def list_daily(soup, day):
     table = [(u"Status", u"ID", u"Name")]
 
     for p in content:
-        status = u"New" if p.find("span", class_="new") else u"Normal"
+        status = u"Update" if p.find("span", class_="new") else u"Normal"
         a = p.select(".title a")[0]
         table.append((status, a["href"][22:], a.get_text()))
 
@@ -204,6 +205,7 @@ def show_guest(soup):
 
 def process(option):
 
+    global __debug
     __debug = option.debug
 
     if option.sp_name == "list":

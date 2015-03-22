@@ -16,6 +16,7 @@ __debug = False
 def handle_error(e, message):
     print(message)
 
+    global __debug
     if __debug:
         print("-" * 15)
         print(e)
@@ -32,7 +33,12 @@ def mms_extract(url):
 
 def prettify_table(table, separator=" "):
     max_width = [max(len(x) for x in col) for col in zip(*table)]
-    line_list = [separator.join(u"{0:{width}}".format(x, width=max_width[i]) for i, x in enumerate(line)) for line in table]
+    line_list = [
+        separator.join( \
+            u"{0}".format(x) if i == len(line) - 1 else u"{0:{width}}".format(x, width=max_width[i]) \
+                for i, x in enumerate(line) \
+            ) \
+        for line in table]
     return u"\n".join(line_list)
 
 
@@ -81,11 +87,12 @@ def list_daily(day):
         return
 
     # prepare report text
-    table = [(u"Status", u"ID", u"Name")] + [(u"Normal", p.parent["href"][35:], p.get_text()) \
-            for p in content.select(".hbkProgramTitle")]
+    table = [(u"Status", u"ID", u"Name")]
 
-    table += [(u"New", p.parent["href"][35:], p.get_text()) \
+    table += [(u"Update", p.parent["href"][35:], p.get_text()) \
             for p in content.select(".hbkProgramTitleNew")]
+    table += [(u"Normal", p.parent["href"][35:], p.get_text()) \
+            for p in content.select(".hbkProgramTitle")]
 
     # prettify table
     text = prettify_table(table)
@@ -152,7 +159,7 @@ def _show_printer(title):
 
             string = fn(*args, **kwds)
             if string:
-                print("{0}\n".format(string.encode("gb18030")))
+                print("{0}\n".format(string.strip().encode("gb18030")))
         return warpper
     return decorator
 
@@ -215,6 +222,7 @@ def show_guest(soup):
 
 def process(option):
 
+    global __debug
     __debug = option.debug
 
     if option.sp_name == "list":

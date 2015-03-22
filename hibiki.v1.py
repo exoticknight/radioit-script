@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from bs4 import BeautifulSoup
@@ -8,7 +8,7 @@ import argparse
 
 
 def get_file_name(url):
-    return url[url.rindex("/")+1:]
+    return url.split("/")[-1]
 
 
 def mms_extract(url):
