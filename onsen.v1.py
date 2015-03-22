@@ -9,7 +9,7 @@ import json
 
 
 def get_file_name(url):
-    return url[url.rindex("/")+1:]
+    return url.split("/")[-1]
 
 
 def print_info(soup):
@@ -62,7 +62,7 @@ def download_audio(name, proxy):
 def download_images(soup, name):
     for pic in soup.select(".newProgramLeft > img"):
         path = pic["src"]
-        filename = path[path.rindex("/")+1:]
+        filename = get_file_name(path)
         import urllib
         urllib.urlretrieve(u"http://www.onsen.ag/program/{name}/".format(name=name) + path, filename=filename)
         print("done")
@@ -95,7 +95,7 @@ def process(option, proxy):
         try:
             download_audio(option.name, proxy)
         except Exception, e:
-            print("failed")
+            print("failed, error {0}".format(e))
 
     print("---------------------------------------------------")
     print("Completed.")
