@@ -16,6 +16,7 @@ __debug = False
 def handle_error(e, message):
     print(message)
 
+    global __debug
     if __debug:
         print("-" * 15)
         print(e)
@@ -98,11 +99,10 @@ def list_daily(day):
         return
 
     # prepare report text
-    table = [(u"Status", u"ID", u"Name")] + [(u"Normal", p \
-            for p in content] # 3
+    table = [(u"Status", u"ID", u"Name")]
 
-    table += [(u"New", p \
-            for p in content] # 4
+    table += [(u"Update",p,p) for p in content] # 3
+    table += [(u"Normal",p,p) for p in content] # 4
 
     # prettify table
     text = prettify_table(table)
@@ -180,7 +180,7 @@ def _show_printer(title):
 
             string = fn(*args, **kwds)
             if string:
-                print("{0}\n".format(string.encode("gb18030")))
+                print("{0}\n".format(string.strip().encode("gb18030")))
         return warpper
     return decorator
 
@@ -271,6 +271,7 @@ def show_guest(soup):
 
 def process(option):
 
+    global __debug
     __debug = option.debug
 
     if option.sp_name == "list":
@@ -287,7 +288,7 @@ def process(option):
             list_daily(option.day)
 
         elif option.new:
-            # self-definded function for listing out recent new bangumi
+            # self-definded function for listing out recent new bangumi / updated bangumi
             list_new()
 
         elif option.all:
