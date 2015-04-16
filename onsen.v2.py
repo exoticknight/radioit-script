@@ -198,7 +198,9 @@ def show_description(soup):
 
 @_show_printer("Title")
 def show_title(soup):
-    content = soup.find(id="newProgramWrap").find("h1")
+    content = soup.find(id="newProgramWrap")
+    if content:
+	    content = content.find("h1")
 
     if content:
         return content.get_text()
@@ -206,7 +208,9 @@ def show_title(soup):
 
 @_show_printer("Comment")
 def show_comment(soup):
-    content = soup.find(class_="newProgramRight").find("p")
+    content = soup.find(class_="newProgramRight")
+    if content:
+	    content = content.find("p")
 
     if content:
         return content.get_text()

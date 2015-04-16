@@ -48,7 +48,7 @@ def prettify_table(table, separator=" "):
 def list_all(soup):
     import re
     content = []
-    for day in soup.find_all(id=re.compile("mon|tue|wed|thu|fri")):
+    for day in soup.find_all(id=re.compile("mon|tue|wed|thu|fri|irr")):
         content += day.select(".title a")
 
     # prepare report text
@@ -117,15 +117,16 @@ def download_audio(soup):
 
 def download_images(soup):
     images = soup.select(".thumbnail img")
+    url = "http://www.animate.tv"
 
     if images:
         import urllib
 
         for image in images:
-            print("Downloading image: {0}".format(image["src"])),
+            print("Downloading image: {0}".format(url + image["src"])),
 
             try:
-                urllib.urlretrieve(image["src"], filename=get_file_name(image["src"]))
+                urllib.urlretrieve(url + image["src"], filename=get_file_name(image["src"]))
                 print(" >> Done")
             except Exception, e:
                 handle_error(e, " >> Failed")
