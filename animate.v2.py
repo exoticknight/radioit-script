@@ -119,6 +119,9 @@ def download_images(soup):
     images = soup.select(".thumbnail img")
     url = "http://www.animate.tv"
 
+    if not images:
+        images = soup.select(".box_img > img")
+
     if images:
         import urllib
 

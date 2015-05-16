@@ -198,12 +198,18 @@ def show_comment(soup):
 
 @_show_printer("Schedule")
 def show_schedule(soup):
-    content = soup.select("table.hbkTextTable > tr > td:nth-of-type(2) > div")
+    content1 = soup.select("table.hbkTextTable > tr > td:nth-of-type(2) > div")
+    content2 = soup.select(".hbkDescriptonContents")[-1].previous_sibling.previous_sibling.previous_sibling.previous_sibling.select("span")[0]
+    schedule = ""
 
-    if content:
-        schedule = content[-5].get_text()
-        schedule = content[-3].get_text() if schedule == "" else schedule
-        return schedule
+    if content1:
+        schedule = content1[-5].get_text()
+        schedule = content1[-3].get_text() if schedule == "" else schedule
+
+    if content2:
+        schedule = schedule + "\n" + content2.string
+
+    return schedule
 
 
 @_show_printer("Personality")
