@@ -4,6 +4,7 @@
 import urllib2
 import sys
 import argparse
+import urlparse
 
 from functools import wraps
 from bs4 import BeautifulSoup
@@ -110,7 +111,7 @@ def list_new(soup):
         self-defined functions can be called by arguments after 'download' command
 """
 def download_audio(soup):
-    mms = (u"http://www.animate.tv{}".format(soup.select(".playBox")[1].select(".btn > a")[0]["href"]))
+    mms = urlparse.urljoin(u"http://www.animate.tv", soup.select(".playBox")[1].select(".btn > a")[0]["href"])
     print("Download not supported, please use the link below in Xunlei or some other download tools.")
     print(mms_extract(mms))
 
@@ -126,10 +127,10 @@ def download_images(soup):
         import urllib
 
         for image in images:
-            print("Downloading image: {0}".format(url + image["src"])),
+            print("Downloading image: {0}".format(urlparse.urljoin(url, image["src"])))
 
             try:
-                urllib.urlretrieve(url + image["src"], filename=get_file_name(image["src"]))
+                urllib.urlretrieve(urlparse.urljoin(url, image["src"]), filename=get_file_name(image["src"]))
                 print(" >> Done")
             except Exception, e:
                 handle_error(e, " >> Failed")
