@@ -145,7 +145,15 @@ def download_audio(id, proxy=None):
 
 
 def download_images(soup, id):
-    images = soup.select(".newProgramLeft > img")
+    images = soup.find(class_="newProgramLeft")
+
+    if images:
+        images = images.find_all('img')
+    else:
+        images = soup.find_all('img', src=re.compile("image/"))
+        if not images:
+            return
+
     url = u"http://www.onsen.ag/program/{id}/".format(id=id)
 
     if images:
@@ -182,18 +190,24 @@ def _show_printer(title):
 
 @_show_printer("Name")
 def show_name(soup):
-    content = soup.find(id="outLineWrap").find("h1")
-
+    content = soup.find(id="outLineWrap")
     if content:
+        content = content.find("h1")
         return content.get_text()
+    else:
+	    content = soup.find("title")
+	    return content.get_text()[0:-5]
 
 
 @_show_printer("Description")
 def show_description(soup):
-    content = soup.find(id="introductionWrap").find("p")
+    content = soup.find(id="introductionWrap")
 
     if content:
-        return content.get_text()
+	    content = content.find("p")
+
+    if content:
+	    return content.get_text()
 
 
 @_show_printer("Title")
