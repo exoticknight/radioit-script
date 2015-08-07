@@ -4,6 +4,7 @@
 import urllib2
 import sys
 import argparse
+import urlparse
 
 from functools import wraps
 from bs4 import BeautifulSoup
