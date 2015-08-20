@@ -28,7 +28,7 @@ def get_file_name(url):
 
 
 def mms_extract(url):
-    soup = BeautifulSoup(urllib2.urlopen(url))
+    soup = BeautifulSoup(urllib2.urlopen(url), "html.parser")
     return soup.select("ref")[0]["href"]
 
 
@@ -46,11 +46,14 @@ def prettify_table(table, separator=" "):
 """command: list
         self-defined functions can be called by arguments after 'list' command
 """
-def list_all(soup):
-    import re
-    content = []
-    for day in soup.find_all(id=re.compile("mon|tue|wed|thu|fri|irr")):
-        content += day.select(".title a")
+def list_all():
+    try:
+        soup = BeautifulSoup(urllib2.urlopen(u"http://animate.tv/radio/?m=t", timeout=60), "html.parser")
+    except Exception, e:
+        handle_error(e, "Network Error.")
+        return
+
+    content = soup.select(".titleList .wrapper a")
 
     # prepare report text
     table = [(u"ID", u"Name")] + [(a["href"][22:], a.get_text()) for a in content]
@@ -61,7 +64,13 @@ def list_all(soup):
     print("\n{0} bangumi counted.".format(len(table) - 1))
 
 
-def list_daily(soup, day):
+def list_daily(day):
+    try:
+        soup = BeautifulSoup(urllib2.urlopen(u"http://animate.tv/radio/", timeout=60), "html.parser")
+    except Exception, e:
+        handle_error(e, "Network Error.")
+        return
+
     from datetime import date
     day_selector = {
         0: 'mon',
@@ -77,15 +86,11 @@ def list_daily(soup, day):
         print("Nothing found.")
         return
 
-    content = soup.select("#{} .contents_block_A .textArea".format(day_selector))
+    content = soup.select("#{} .box".format(day_selector))
 
     # prepare report text
     table = [(u"Status", u"ID", u"Name")]
-
-    for p in content:
-        status = u"Update" if p.find("span", class_="new") else u"Normal"
-        a = p.select(".title a")[0]
-        table.append((status, a["href"][22:], a.get_text()))
+    table += [(u"Normal", p.find("a")["href"][22:], p.find(class_="title").get_text()) for p in content]
 
     # prettify table
     text = prettify_table(table)
@@ -95,33 +100,24 @@ def list_daily(soup, day):
 
 
 def list_new(soup):
-    content = soup.select("#newWrap .title a")
-
-    # prepare report text
-    table = [(u"ID", u"Name")] + [(a["href"][22:], a.get_text()) for a in content]
-
-    # prettify table
-    text = prettify_table(table)
-
-    print(text.encode("gb18030"))
-    print("\n{0} bangumi counted.".format(len(table) - 1))
+    pass
 
 
 """command: download
         self-defined functions can be called by arguments after 'download' command
 """
 def download_audio(soup):
-    mms = urlparse.urljoin(u"http://www.animate.tv", soup.select(".playBox")[1].select(".btn > a")[0]["href"])
+    mms = urlparse.urljoin(u"http://www.animate.tv", soup.select(".wmp a")[0]["href"])
     print("Download not supported, please use the link below in Xunlei or some other download tools.")
     print(mms_extract(mms))
 
 
 def download_images(soup):
-    images = soup.select(".thumbnail img")
+    images = soup.select("#tabBox01 img")
     url = "http://www.animate.tv"
 
     if not images:
-        images = soup.select(".box_img > img")
+        images = soup.select(".photo img")
 
     if images:
         import urllib
@@ -157,15 +153,15 @@ def _show_printer(title):
 
 @_show_printer("Name")
 def show_name(soup):
-    content = soup.find(class_="ttl")
+    content = soup.find("title")
 
     if content:
-        return content.get_text()
+        return content.get_text()[:-31]
 
 
 @_show_printer("Description")
 def show_description(soup):
-    content = soup.find(id="tab-outline")
+    content = soup.find(id="tabBox02")
 
     if content:
         return "\n".join(line for line in content.stripped_strings)
@@ -173,7 +169,7 @@ def show_description(soup):
 
 @_show_printer("Title")
 def show_title(soup):
-    content = soup.find(class_="broadcast_title")
+    content = soup.find(class_="radioTitle")
 
     if content:
         return content.get_text()
@@ -181,7 +177,7 @@ def show_title(soup):
 
 @_show_printer("Comment")
 def show_comment(soup):
-    content = soup.find(class_="textBox")
+    content = soup.find(id="tabBox01")
 
     if content:
         return "\n".join(line for line in content.stripped_strings)
@@ -189,18 +185,18 @@ def show_comment(soup):
 
 @_show_printer("Schedule")
 def show_schedule(soup):
-    content = soup.select(".ttlArea .date")
+    content = soup.select(".entry .textBox")[0]
 
     if content:
-        return content[0].get_text()
+        return "\n".join(line for line in content.stripped_strings)
 
 
 @_show_printer("Personality")
 def show_personality(soup):
-    content = soup.find_all(class_="htmlbox_3")
+    content = soup.select(".textBox ul li")
 
     if content:
-        return content[-2].get_text()
+        return "\n".join([li.get_text() for li in content])
 
 
 @_show_printer("Guest")
@@ -215,32 +211,27 @@ def process(option):
 
     if option.sp_name == "list":
         # write your handle for command 'list' below
-        try:
-            soup = BeautifulSoup(urllib2.urlopen(u"http://animate.tv/radio/", timeout=60))
-        except Exception, e:
-            handle_error(e, "Network Error.")
-            return
 
         # handle arguments, fill the IF block
         if option.today:
             # self-definded function for listing out today's bangumi
-            list_daily(soup, 0)
+            list_daily(0)
 
         elif option.day:
             # self-definded function for listing out bangumi of specific day
-            list_daily(soup, option.day)
+            list_daily(option.day)
 
         elif option.new:
             # self-definded function for listing out recent new bangumi
-            list_new(soup)
+            print("do not support")
 
         elif option.all:
             # self-definded function for listing out all bangumi
-            list_all(soup)
+            list_all()
 
     elif option.sp_name == "download":
         try:
-            soup = BeautifulSoup(urllib2.urlopen(u"http://www.animate.tv/radio/{id}/".format(id=option.id), timeout=60))
+            soup = BeautifulSoup(urllib2.urlopen(u"http://www.animate.tv/radio/{id}/".format(id=option.id), timeout=60), "html.parser")
         except Exception, e:
             handle_error(e, "Network Error.")
             return
@@ -256,7 +247,7 @@ def process(option):
 
     elif option.sp_name == "show":
         try:
-            soup = BeautifulSoup(urllib2.urlopen(u"http://www.animate.tv/radio/{id}/".format(id=option.id), timeout=60))
+            soup = BeautifulSoup(urllib2.urlopen(u"http://www.animate.tv/radio/{id}/".format(id=option.id), timeout=60), "html.parser")
         except Exception, e:
             handle_error(e, "Network Error.")
             return

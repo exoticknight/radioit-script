@@ -41,7 +41,7 @@ def list_all():
 
     # acquire html content
     try:
-        soup = BeautifulSoup(urllib2.urlopen(u"http://lantis-net.com/", timeout=60))
+        soup = BeautifulSoup(urllib2.urlopen(u"http://lantis-net.com/", timeout=60), "html.parser")
     except Exception, e:
         handle_error(e, "Network Error.")
         return
@@ -75,7 +75,7 @@ def list_daily(day):
 
     # acquire html content
     try:
-        soup = BeautifulSoup(urllib2.urlopen(u"http://lantis-net.com/contents/{}.html".format(day_selector), timeout=60))
+        soup = BeautifulSoup(urllib2.urlopen(u"http://lantis-net.com/contents/{}.html".format(day_selector), timeout=60), "html.parser")
     except Exception, e:
         handle_error(e, "Network Error.")
         return

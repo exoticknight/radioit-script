@@ -29,7 +29,7 @@ def get_file_name(url):
 
 
 def mms_extract(url):
-    soup = BeautifulSoup(urllib2.urlopen(url))
+    soup = BeautifulSoup(urllib2.urlopen(url), "html.parser")
     return soup.select("ref")[0]["href"]
 
 
@@ -50,7 +50,7 @@ def prettify_table(table, separator=" "):
 def list_all():
     # acquire html content
     try:
-        soup = BeautifulSoup(urllib2.urlopen(u"http://www.agqr.jp/timetable/streaming.php", timeout=60)) # 1
+        soup = BeautifulSoup(urllib2.urlopen(u"http://www.agqr.jp/timetable/streaming.php", timeout=60), "html.parser") # 1
     except Exception, e:
         handle_error(e, "Network Error.")
         return
@@ -86,7 +86,7 @@ def list_new():
 def download_audio(id):
     url = u"http://seaside-c.jp/program/{id}/".format(id=id)
     try:
-        soup = BeautifulSoup(urllib2.urlopen(url, timeout=30))
+        soup = BeautifulSoup(urllib2.urlopen(url, timeout=30), "html.parser")
     except Exception, e:
         handle_error(e, "Network Error.")
         return

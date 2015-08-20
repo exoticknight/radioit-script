@@ -29,7 +29,7 @@ def get_file_name(url):
 
 
 def mms_extract(url):
-    soup = BeautifulSoup(urllib2.urlopen(url))
+    soup = BeautifulSoup(urllib2.urlopen(url), "html.parser")
     return soup.select("ref")[0]["href"]
 
 
@@ -258,7 +258,7 @@ def process(option):
 
     if option.sp_name == "list":
         try:
-            soup = BeautifulSoup(urllib2.urlopen(u"http://www.onsen.ag/", timeout=60))
+            soup = BeautifulSoup(urllib2.urlopen(u"http://www.onsen.ag/", timeout=60), "html.parser")
         except Exception, e:
             handle_error(e, "Network Error.")
             return
@@ -285,7 +285,7 @@ def process(option):
         # handle arguments, fill the IF block
         if option.everything or option.image:
             try:
-                soup = BeautifulSoup(urllib2.urlopen(u"http://www.onsen.ag/program/{id}".format(id=option.id), timeout=30))
+                soup = BeautifulSoup(urllib2.urlopen(u"http://www.onsen.ag/program/{id}".format(id=option.id), timeout=30), "html.parser")
             except Exception, e:
                 handle_error(e, "Network Error.")
                 return
@@ -299,7 +299,7 @@ def process(option):
 
     elif option.sp_name == "show":
         try:
-            soup = BeautifulSoup(urllib2.urlopen(u"http://www.onsen.ag/program/{id}".format(id=option.id), timeout=30))
+            soup = BeautifulSoup(urllib2.urlopen(u"http://www.onsen.ag/program/{id}".format(id=option.id), timeout=30), "html.parser")
         except Exception, e:
             handle_error(e, "Network Error.")
             return

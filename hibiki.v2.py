@@ -28,7 +28,7 @@ def get_file_name(url):
 
 
 def mms_extract(url):
-    soup = BeautifulSoup(urllib2.urlopen(url))
+    soup = BeautifulSoup(urllib2.urlopen(url), "html.parser")
     return soup.select("ref")[0]["href"]
 
 
@@ -49,7 +49,7 @@ def prettify_table(table, separator=" "):
 def list_all():
     # acquire html content
     try:
-        soup = BeautifulSoup(urllib2.urlopen(u"http://hibiki-radio.jp/mokuji", timeout=60))
+        soup = BeautifulSoup(urllib2.urlopen(u"http://hibiki-radio.jp/mokuji", timeout=60), "html.parser")
     except Exception, e:
         handle_error(e, "Network Error.")
         return
@@ -69,7 +69,7 @@ def list_all():
 def list_daily(day):
     # acquire html content
     try:
-        soup = BeautifulSoup(urllib2.urlopen(u"http://hibiki-radio.jp/program", timeout=60))
+        soup = BeautifulSoup(urllib2.urlopen(u"http://hibiki-radio.jp/program", timeout=60), "html.parser")
     except Exception, e:
         handle_error(e, "Network Error.")
         return
@@ -104,7 +104,7 @@ def list_daily(day):
 
 def list_new():
     try:
-        soup = BeautifulSoup(urllib2.urlopen(u"http://hibiki-radio.jp/mokuji", timeout=60))
+        soup = BeautifulSoup(urllib2.urlopen(u"http://hibiki-radio.jp/mokuji", timeout=60), "html.parser")
     except Exception, e:
         handle_error(e, "Network Error.")
         return
@@ -256,7 +256,7 @@ def process(option):
     elif option.sp_name == "download":
         # write your handle for command 'download' below
         try:
-            soup = BeautifulSoup(urllib2.urlopen(u"http://hibiki-radio.jp/description/{id}".format(id=option.id), timeout=30))
+            soup = BeautifulSoup(urllib2.urlopen(u"http://hibiki-radio.jp/description/{id}".format(id=option.id), timeout=30), "html.parser")
         except Exception, e:
             handle_error(e, "Network Error.")
             return
@@ -273,7 +273,7 @@ def process(option):
     elif option.sp_name == "show":
         # write your handle for command 'show' below
         try:
-            soup = BeautifulSoup(urllib2.urlopen(u"http://hibiki-radio.jp/description/{id}".format(id=option.id), timeout=30))
+            soup = BeautifulSoup(urllib2.urlopen(u"http://hibiki-radio.jp/description/{id}".format(id=option.id), timeout=30), "html.parser")
         except Exception, e:
             handle_error(e, "Network Error.")
             return
