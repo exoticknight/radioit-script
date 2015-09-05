@@ -147,7 +147,7 @@ def download_images(soup):
             print("Downloading"),
             try:
                 urllib.urlretrieve(image["src"], filename=get_file_name(image["src"]))
-                print(" >> Done")
+                print(">> Done")
             except Exception, e:
                 handle_error(e, " >> Failed")
             
