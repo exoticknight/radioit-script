@@ -160,14 +160,21 @@ def download_images(soup, id):
         import urllib
 
         for image in images:
-            print("Downloading image: {0}".format(url + image["src"])),
+            print("image found")
+            if "click" in image.attrs:
+                print("click => {0}".format(image["click"]))
+            if "onmouseover" in image.attrs:
+                print("onmouseover => {0}".format(image["onmouseover"]))
+            print("src => {0}".format(url + image["src"]))
 
+            print("Downloading"),
             try:
                 urllib.urlretrieve(url + image["src"], filename=get_file_name(image["src"]))
                 print(" >> Done")
             except Exception, e:
                 handle_error(e, " >> Failed")
 
+            print("-"*15)
     else:
         print("No image found.")
 
