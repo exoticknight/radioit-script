@@ -126,10 +126,10 @@ def download_audio(id, proxy=None):
             urllib.urlretrieve(path, filename=filename)
         else:
             if proxy[0] == "http":
-                # not sure whether this works...
-                import urllib
-                urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler({"http": proxy[1]})))
-                urllib.request.urlretrieve(path, filename=filename)
+                urllib2.install_opener(urllib2.build_opener(urllib2.ProxyHandler({'http': proxy[1]})))
+                with open(filename,'wb') as f:
+                    f.write(urllib2.urlopen(path).read())
+                    f.close()
             elif proxy[0] == "socks":
                 proxy_ip, proxy_port = proxy[1].split(":")
                 import socks
