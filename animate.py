@@ -160,10 +160,10 @@ def _show_printer(title):
 
 @_show_printer("Name")
 def show_name(soup):
-    content = soup.find("title")
+    content = soup.select(".headline h2")[0]
 
     if content:
-        return content.get_text()[:-31]
+        return content.get_text()
 
 
 @_show_printer("Description")

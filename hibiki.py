@@ -119,9 +119,9 @@ def list_new(bangumis):
         self-defined functions can be called by arguments after 'download' command
 """
 def download_audio(soup):
-    mms = soup.select("div.hbkDescriptonContents embed")[-1]["src"]
+    #mms = soup.select("div.hbkDescriptonContents embed")[-1]["src"]
     print("Download not supported, please use the link below in Xunlei or some other download tools.")
-    print(mms_extract(mms))
+    #print(mms_extract(mms))
 
 
 def download_images(bangumi):
