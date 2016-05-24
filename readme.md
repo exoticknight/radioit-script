@@ -7,37 +7,7 @@
 1. hibiki.v1.py / hibiki.v2.py -> [響 - HiBiKi Radio Station -](http://hibiki-radio.jp/)
 1. onsen.v1.py / onsen.v2.py-> [インターネットラジオステーション＜音泉＞](http://www.onsen.ag/)
 1. animate.v1.py / animate.v2.py -> [ウェブラジオ - アニメイトTV](http://animate.tv/radio/)
-1. _radioit_script_template.py，ver 2.x的腳本模板
-
-##ver 1.x 使用指南
-
-###`-i`，`--image`
-
-如果有附带的图片则下载图片
-
-###`-a`，`--audio`
-
-下载广播音频或者提取音频链接
-
-###`-d`，`--description`
-
-显示当期广播的描述
-
-###`-c`，`--complete`
-
-相当于同时组合`-i`、`-a`和`-d`。
-
-###`-p`，`--proxy`
-
-设置代理，突破广播音频的日本IP限制。
-
--p socks 127.0.0.1:1080，使用socks代理，本地端点127.0.0.1:1080
-
--p http 127.0.0.1:1080，使用http代理，本地端点127.0.0.1:1080
-
-###`-h`，`--help`
-
-显示帮助
+1. _radioit_script_template.py，腳本模板
 
 ##例子
 
