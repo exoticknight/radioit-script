@@ -230,8 +230,11 @@ def show_title(soup):
 @_show_printer("Comment")
 def show_comment(soup):
     content = soup.find(class_="newProgramRight")
+    if not content:
+        content = soup.find(class_="comment")
+
     if content:
-	    content = content.find("p")
+        content = content.find("p")
 
     if content:
         return content.get_text()
