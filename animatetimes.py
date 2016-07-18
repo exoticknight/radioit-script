@@ -48,7 +48,7 @@ def prettify_table(table, separator=" "):
 """
 def list_all():
     try:
-        soup = BeautifulSoup(urllib2.urlopen(u"http://animate.tv/radio/?m=t", timeout=60), "html.parser")
+        soup = BeautifulSoup(urllib2.urlopen(u"http://www.animatetimes.com/radio/?m=t", timeout=60), "html.parser")
     except Exception, e:
         handle_error(e, "Network Error.")
         return
@@ -66,7 +66,7 @@ def list_all():
 
 def list_daily(day):
     try:
-        soup = BeautifulSoup(urllib2.urlopen(u"http://animate.tv/radio/", timeout=60), "html.parser")
+        soup = BeautifulSoup(urllib2.urlopen(u"http://www.animatetimes.com/radio/", timeout=60), "html.parser")
     except Exception, e:
         handle_error(e, "Network Error.")
         return
@@ -107,14 +107,14 @@ def list_new(soup):
         self-defined functions can be called by arguments after 'download' command
 """
 def download_audio(soup):
-    mms = urlparse.urljoin(u"http://www.animate.tv", soup.select(".wmp a")[0]["href"])
+    mms = urlparse.urljoin(u"http://www.www.animatetimes.com", soup.select(".wmp a")[0]["href"])
     print("Download not supported, please use the link below in Xunlei or some other download tools.")
     print(mms_extract(mms))
 
 
 def download_images(soup):
     images = soup.select("#tabBox01 img")
-    url = "http://www.animate.tv"
+    url = "http://www.www.animatetimes.com"
 
     if not images:
         images = soup.select(".photo img")
@@ -238,7 +238,7 @@ def process(option):
 
     elif option.sp_name == "download":
         try:
-            soup = BeautifulSoup(urllib2.urlopen(u"http://www.animate.tv/radio/{id}/".format(id=option.id), timeout=60), "html.parser")
+            soup = BeautifulSoup(urllib2.urlopen(u"http://www.animatetimes.com/radio/{id}/".format(id=option.id), timeout=60), "html.parser")
         except Exception, e:
             handle_error(e, "Network Error.")
             return
@@ -254,7 +254,7 @@ def process(option):
 
     elif option.sp_name == "show":
         try:
-            soup = BeautifulSoup(urllib2.urlopen(u"http://www.animate.tv/radio/{id}/".format(id=option.id), timeout=60), "html.parser")
+            soup = BeautifulSoup(urllib2.urlopen(u"http://www.animatetimes.com/radio/{id}/".format(id=option.id), timeout=60), "html.parser")
         except Exception, e:
             handle_error(e, "Network Error.")
             return
