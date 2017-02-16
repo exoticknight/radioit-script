@@ -4,9 +4,9 @@
 
 ##支持
 
-1. hibiki.v1.py / hibiki.v2.py -> [響 - HiBiKi Radio Station -](http://hibiki-radio.jp/)
-1. onsen.v1.py / onsen.v2.py-> [インターネットラジオステーション＜音泉＞](http://www.onsen.ag/)
-1. animate.v1.py / animate.v2.py -> [ウェブラジオ - アニメイトTV](http://animate.tv/radio/)
+1. hibiki.py -> [響 - HiBiKi Radio Station -](http://hibiki-radio.jp/)
+1. onsen.py-> [インターネットラジオステーション＜音泉＞](http://www.onsen.ag/)
+1. animate.py -> [ウェブラジオ - アニメイトTV](http://animate.tv/radio/)
 1. _radioit_script_template.py，腳本模板
 
 ##例子
@@ -14,9 +14,6 @@
 ![t1](../../raw/master/ver1-1.png)
 
 ![t2](../../raw/master/ver1-2.png)
-
-##ver 2.x 使用指南
-ver 2.x 使用子命令区分了下载广播和查看广播信息的功能，并增加了查看广播站信息的功能。
 
 ###`-h`, `--help`
 
@@ -50,7 +47,7 @@ ver 2.x 使用子命令区分了下载广播和查看广播信息的功能，并
 
 下载某个广播的资源
 
-####`--a`, `--audio`
+####`-a`, `--audio`
 
 下载广播最新一期的音频
 
