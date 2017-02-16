@@ -10,6 +10,9 @@ from functools import wraps
 from bs4 import BeautifulSoup
 
 __debug = False
+__codes = {
+    "win32": "gb18030"
+}.get(sys.platform, "utf8")
 
 
 """utils
@@ -53,7 +56,7 @@ def list_all():
     # prettify table
     text = prettify_table(table)
 
-    print(text.encode("gb18030"))
+    print(text.encode(__codes))
     print("\n{0} bangumi counted.".format(len(table) - 1))
 
 
@@ -94,7 +97,7 @@ def list_daily(day):
     # prettify table
     text = prettify_table(table)
 
-    print(text.encode("gb18030"))
+    print(text.encode(__codes))
     print("\n{0} bangumi counted.".format(len(table) - 1))
 
 
