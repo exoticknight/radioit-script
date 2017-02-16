@@ -11,7 +11,9 @@ from functools import wraps
 from bs4 import BeautifulSoup
 
 __debug = False
-
+__codes = {
+    "win32": "gb18030"
+}.get(sys.platform, "utf8")
 
 """utils
 """
@@ -55,7 +57,7 @@ def list_all(soup):
     # prettify table
     text = prettify_table(table)
 
-    print(text.encode("gb18030"))
+    print(text.encode(__codes))
     print("\n{0} bangumi counted.".format(len(table) - 1))
 
 
@@ -88,7 +90,7 @@ def list_daily(soup, day):
     # prettify table
     text = prettify_table(table)
 
-    print(text.encode("gb18030"))
+    print(text.encode(__codes))
     print("\n{0} bangumi counted.".format(len(table) - 1))
 
 
@@ -101,7 +103,7 @@ def list_new(soup):
     # prettify table
     text = prettify_table(table)
 
-    print(text.encode("gb18030"))
+    print(text.encode(__codes))
     print("\n{0} bangumi counted.".format(len(table) - 1))
 
 
@@ -122,8 +124,9 @@ def download_audio(id, proxy=None):
     print("Downloading audio: {0}".format(path)),
     try:
         if not proxy:
-            import urllib
-            urllib.urlretrieve(path, filename=filename)
+            pass
+            #import urllib
+            #urllib.urlretrieve(path, filename=filename)
         else:
             if proxy[0] == "http":
                 urllib2.install_opener(urllib2.build_opener(urllib2.ProxyHandler({'http': proxy[1]})))
@@ -190,7 +193,7 @@ def _show_printer(title):
 
             string = fn(*args, **kwds)
             if string:
-                print("{0}\n".format(string.strip().encode("gb18030")))
+                print("{0}\n".format(string.strip().encode(__codes)))
         return warpper
     return decorator
 
