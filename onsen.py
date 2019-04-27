@@ -148,7 +148,7 @@ def download_audio(id, proxy=None):
 
 
 def download_images(soup, id):
-    images = soup.find(class_=re.compile("newProgramLeft|newProgramRight"))
+    images = soup.find(class_=re.compile("newProgramLeft|newProgramRight|photoWrap"))
 
     if images:
         images = images.find_all('img')
@@ -172,7 +172,7 @@ def download_images(soup, id):
 
             print(("Downloading"), end=' ')
             try:
-                urllib.request.urlretrieve(url + image["src"], filename=get_file_name(image["src"]))
+                urllib.request.urlretrieve(image["src"] if image["src"].startswith("http") else urllib.parse.urljoin(url, image["src"]), filename=get_file_name(image["src"]))
                 print(" >> Done")
             except Exception as e:
                 handle_error(e, " >> Failed")
@@ -348,7 +348,7 @@ def process(option):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(version="2.0")
+    parser = argparse.ArgumentParser()
     parser.add_argument("--debug", action="store_true", dest="debug", default=False, help="debug mode")
     sp = parser.add_subparsers(title="commands", description="support commands", help="what they will do", dest="sp_name")
 
