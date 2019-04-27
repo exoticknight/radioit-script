@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import urllib.request, urllib.error, urllib.parse
+import urllib2
 import sys
 import argparse
 import re
@@ -22,7 +22,7 @@ def handle_error(e, message):
 
     global __debug
     if __debug:
-        print(("-" * 15))
+        print("-" * 15)
         print(e)
 
 
@@ -31,7 +31,7 @@ def get_file_name(url):
 
 
 def mms_extract(url):
-    soup = BeautifulSoup(urllib.request.urlopen(url), "html.parser")
+    soup = BeautifulSoup(urllib2.urlopen(url), "html.parser")
     return soup.select("ref")[0]["href"]
 
 
@@ -39,11 +39,11 @@ def prettify_table(table, separator=" "):
     max_width = [max(len(x) for x in col) for col in zip(*table)]
     line_list = [
         separator.join( \
-            "{0}".format(x) if i == len(line) - 1 else "{0:{width}}".format(x, width=max_width[i]) \
+            u"{0}".format(x) if i == len(line) - 1 else u"{0:{width}}".format(x, width=max_width[i]) \
                 for i, x in enumerate(line) \
             ) \
         for line in table]
-    return "\n".join(line_list)
+    return u"\n".join(line_list)
 
 
 """command: list
@@ -53,12 +53,12 @@ def list_all(soup):
     content = soup.select(".listWrap li")
 
     # prepare report text
-    table = [("ID", "Name")] + [(li["id"], li.find("h4").get_text()) for li in content]
+    table = [(u"ID", u"Name")] + [(li["id"], li.find("h4").get_text()) for li in content]
     # prettify table
     text = prettify_table(table)
 
-    print((text.encode(__codes)))
-    print(("\n{0} bangumi counted.".format(len(table) - 1)))
+    print(text.encode(__codes))
+    print("\n{0} bangumi counted.".format(len(table) - 1))
 
 
 def list_daily(soup, day):
@@ -78,33 +78,33 @@ def list_daily(soup, day):
         return
 
     content = soup.select(".listWrap li")
-    content = [x for x in content if x["data-week"] == day_selector]
+    content = filter(lambda x:x["data-week"] == day_selector, content)
 
     # prepare report text
-    table = [("Status", "ID", "Name")]
+    table = [(u"Status", u"ID", u"Name")]
 
     for li in content:
-        status = "Update" if "newChecked" in li["class"] else "Normal"
+        status = u"Update" if "newChecked" in li["class"] else u"Normal"
         table.append((status, li["id"], li.find("h4").get_text()))
 
     # prettify table
     text = prettify_table(table)
 
-    print((text.encode(__codes)))
-    print(("\n{0} bangumi counted.".format(len(table) - 1)))
+    print(text.encode(__codes))
+    print("\n{0} bangumi counted.".format(len(table) - 1))
 
 
 def list_new(soup):
     content = soup.find_all(attrs={"data-genre": re.compile("new")})
 
     # prepare report text
-    table = [("ID", "Name")] + [(li["id"], li.find("h4").get_text()) for li in content]
+    table = [(u"ID", u"Name")] + [(li["id"], li.find("h4").get_text()) for li in content]
 
     # prettify table
     text = prettify_table(table)
 
-    print((text.encode(__codes)))
-    print(("\n{0} bangumi counted.".format(len(table) - 1)))
+    print(text.encode(__codes))
+    print("\n{0} bangumi counted.".format(len(table) - 1))
 
 
 """command: download
@@ -112,16 +112,16 @@ def list_new(soup):
 """
 def download_audio(id, proxy=None):
     try:
-        respose = urllib.request.urlopen("http://www.onsen.ag/data/api/getMovieInfo/{id}".format(id=id), timeout=60)
+        respose = urllib2.urlopen(u"http://www.onsen.ag/data/api/getMovieInfo/{id}".format(id=id), timeout=60)
         bangumi = json.loads((respose.read())[9:-3])
-    except Exception as e:
+    except Exception, e:
         handle_error(e, "Network Error.")
         return
 
     path = bangumi["moviePath"]["pc"]
     filename = get_file_name(path)
 
-    print(("Downloading audio: {0}".format(path)), end=' ')
+    print("Downloading audio: {0}".format(path)),
     try:
         if not proxy:
             pass
@@ -129,9 +129,9 @@ def download_audio(id, proxy=None):
             #urllib.urlretrieve(path, filename=filename)
         else:
             if proxy[0] == "http":
-                urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler({'http': proxy[1]})))
+                urllib2.install_opener(urllib2.build_opener(urllib2.ProxyHandler({'http': proxy[1]})))
                 with open(filename,'wb') as f:
-                    f.write(urllib.request.urlopen(path).read())
+                    f.write(urllib2.urlopen(path).read())
                     f.close()
             elif proxy[0] == "socks":
                 proxy_ip, proxy_port = proxy[1].split(":")
@@ -139,11 +139,11 @@ def download_audio(id, proxy=None):
                 import socket
                 socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, proxy_ip, int(proxy_port))
                 socket.socket = socks.socksocket
-                import urllib.request, urllib.parse, urllib.error
-                urllib.request.urlretrieve(path, filename=filename)
+                import urllib
+                urllib.urlretrieve(path, filename=filename)
 
         print(" >> Done")
-    except Exception as e:
+    except Exception, e:
         handle_error(e, " >> Failed")
 
 
@@ -157,27 +157,27 @@ def download_images(soup, id):
         if not images:
             return
 
-    url = "http://www.onsen.ag/program/{id}/".format(id=id)
+    url = u"http://www.onsen.ag/program/{id}/".format(id=id)
 
     if images:
-        import urllib.request, urllib.parse, urllib.error
+        import urllib
 
         for image in images:
             print("image found")
             if "click" in image.attrs:
-                print(("click => {0}".format(image["click"])))
+                print("click => {0}".format(image["click"]))
             if "onmouseover" in image.attrs:
-                print(("onmouseover => {0}".format(image["onmouseover"])))
-            print(("src => {0}".format(url + image["src"])))
+                print("onmouseover => {0}".format(image["onmouseover"]))
+            print("src => {0}".format(url + image["src"]))
 
-            print(("Downloading"), end=' ')
+            print("Downloading"),
             try:
-                urllib.request.urlretrieve(url + image["src"], filename=get_file_name(image["src"]))
+                urllib.urlretrieve(url + image["src"], filename=get_file_name(image["src"]))
                 print(" >> Done")
-            except Exception as e:
+            except Exception, e:
                 handle_error(e, " >> Failed")
 
-            print(("-"*15))
+            print("-"*15)
     else:
         print("No image found.")
 
@@ -189,11 +189,11 @@ def _show_printer(title):
     def decorator(fn):
         @wraps(fn)
         def warpper(*args, **kwds):
-            print(("-" * 15 + title + "-" * 15))
+            print("-" * 15 + title + "-" * 15)
 
             string = fn(*args, **kwds)
             if string:
-                print(("{0}\n".format(string.strip().encode(__codes))))
+                print("{0}\n".format(string.strip().encode(__codes)))
         return warpper
     return decorator
 
@@ -256,7 +256,7 @@ def show_personality(soup):
     content = soup.select(".personality02")
 
     if content:
-        return "\n".join(p.get_text() for p in content)
+        return u"\n".join(p.get_text() for p in content)
 
 
 @_show_printer("Guest")
@@ -271,8 +271,8 @@ def process(option):
 
     if option.sp_name == "list":
         try:
-            soup = BeautifulSoup(urllib.request.urlopen("http://www.onsen.ag/", timeout=60), "html.parser")
-        except Exception as e:
+            soup = BeautifulSoup(urllib2.urlopen(u"http://www.onsen.ag/", timeout=60), "html.parser")
+        except Exception, e:
             handle_error(e, "Network Error.")
             return
 
@@ -298,8 +298,8 @@ def process(option):
         # handle arguments, fill the IF block
         if option.everything or option.image:
             try:
-                soup = BeautifulSoup(urllib.request.urlopen("http://www.onsen.ag/program/{id}".format(id=option.id), timeout=30), "html.parser")
-            except Exception as e:
+                soup = BeautifulSoup(urllib2.urlopen(u"http://www.onsen.ag/program/{id}".format(id=option.id), timeout=30), "html.parser")
+            except Exception, e:
                 handle_error(e, "Network Error.")
                 return
 
@@ -312,8 +312,8 @@ def process(option):
 
     elif option.sp_name == "show":
         try:
-            soup = BeautifulSoup(urllib.request.urlopen("http://www.onsen.ag/program/{id}".format(id=option.id), timeout=30), "html.parser")
-        except Exception as e:
+            soup = BeautifulSoup(urllib2.urlopen(u"http://www.onsen.ag/program/{id}".format(id=option.id), timeout=30), "html.parser")
+        except Exception, e:
             handle_error(e, "Network Error.")
             return
 
@@ -364,7 +364,7 @@ if __name__ == "__main__":
     action.add_argument("-a", "--all", action="store_true", dest="all", help="all bangumi")
     action.add_argument("-n", "--new", action="store_true", dest="new", help="new bangumi")
     action.add_argument("--today", action="store_true", dest="today", help="today's bangumi")
-    action.add_argument("-d", "--day", action="store", dest="day", nargs=1, metavar="day", type=int, choices=list(range(1,8)), help="bangumi of specifical day")
+    action.add_argument("-d", "--day", action="store", dest="day", nargs=1, metavar="day", type=int, choices=range(1,8), help="bangumi of specifical day")
 
     # command 'download'
     #
@@ -406,9 +406,9 @@ if __name__ == "__main__":
 
     try:
         args = parser.parse_args(sys.argv[1:])
-    except argparse.ArgumentError as e:
-        print(("bad options: {0}".format(e)))
-    except argparse.ArgumentTypeError as e:
-        print(("bad option value: {0}".format(e)))
+    except argparse.ArgumentError, e:
+        print("bad options: {0}".format(e))
+    except argparse.ArgumentTypeError, e:
+        print("bad option value: {0}".format(e))
     else:
         process(args)
